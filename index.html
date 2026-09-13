@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGITwinTHON | AR/VR Club</title>
+<style>
+:root{
+  --bg:#f6f8fc; --surface:rgba(255,255,255,.82); --surface2:#fff;
+  --text:#111827; --muted:#5b6475; --border:rgba(17,24,39,.10);
+  --primary:#5b5cf0; --primary2:#8b5cf6; --accent:#06b6d4;
+  --shadow:0 20px 60px rgba(35,45,80,.12);
+}
+[data-theme="dark"]{
+  --bg:#080b14; --surface:rgba(18,23,38,.82); --surface2:#111728;
+  --text:#f4f7ff; --muted:#a8b1c5; --border:rgba(255,255,255,.10);
+  --primary:#7c7cff; --primary2:#a970ff; --accent:#22d3ee;
+  --shadow:0 25px 80px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body, body *{
+  font-family:Arial, Helvetica, sans-serif !important;
+}
+body{
+  color:var(--text); background:var(--bg); line-height:1.65;
+  overflow-x:hidden; transition:background .35s,color .35s;
+}
+body:before,body:after{
+  content:"";position:fixed;width:420px;height:420px;border-radius:50%;
+  filter:blur(90px);opacity:.16;pointer-events:none;z-index:-1;
+}
+body:before{background:#7c3aed;top:-160px;left:-140px}
+body:after{background:#06b6d4;right:-160px;bottom:-160px}
+a{text-decoration:none;color:inherit}
+button{font:inherit}
+.container{width:min(1180px,92%);margin:auto}
+
+/* NAV */
+.nav{
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:900;font-size:1.05rem;letter-spacing:.4px}
+.brand span{color:var(--primary)}
+.nav-links{display:flex;gap:24px;color:var(--muted);font-size:.9rem}
+.nav-links a:hover{color:var(--text)}
+.theme{
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);cursor:pointer;display:grid;place-items:center;
+  transition:.25s;box-shadow:0 5px 20px rgba(0,0,0,.06)
+}
+.theme:hover{transform:rotate(15deg) scale(1.06)}
+
+/* HERO */
+.hero{min-height:78vh;display:grid;place-items:center;text-align:center;padding:90px 0 70px;position:relative}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--border);
+  background:var(--surface);border-radius:999px;color:var(--muted);font-size:.82rem;
+  box-shadow:var(--shadow);animation:fadeUp .8s both
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px var(--accent)}
+.logo{
+  margin:25px auto 10px;font-size:clamp(3.4rem,10vw,7.5rem);font-weight:1000;
+  line-height:.95;letter-spacing:-5px;display:inline-block;
+  background:linear-gradient(110deg,var(--text),var(--primary),var(--accent));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:fadeUp .9s .1s both, float 5s ease-in-out infinite
+}
+.win{position:relative;display:inline-block}
+.win:after{
+  content:"👍";position:absolute;font-size:.24em;right:-.02em;top:-.35em;
+  filter:drop-shadow(0 5px 12px rgba(91,92,240,.3));transform:rotate(-8deg);
+}
+.hero h1{font-size:clamp(1.5rem,3vw,2.5rem);margin:16px 0 12px;animation:fadeUp .9s .2s both}
+.hero p{max-width:780px;margin:auto;color:var(--muted);font-size:1.03rem;animation:fadeUp .9s .3s both}
+.hero-actions{margin-top:30px;display:flex;justify-content:center;gap:13px;flex-wrap:wrap;animation:fadeUp .9s .4s both}
+.btn{
+  padding:12px 20px;border-radius:13px;border:1px solid var(--border);cursor:pointer;
+  transition:.25s;font-weight:750
+}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;border:0;box-shadow:0 12px 30px rgba(91,92,240,.25)}
+.btn.secondary{background:var(--surface);color:var(--text)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 15px 30px rgba(0,0,0,.12)}
+.scroll{margin-top:55px;color:var(--muted);font-size:.78rem;animation:bounce 2s infinite}
+
+/* SECTION */
+.section{padding:70px 0}
+.section-head{text-align:center;margin-bottom:30px}
+.kicker{color:var(--primary);font-weight:850;text-transform:uppercase;letter-spacing:2px;font-size:.73rem}
+.section-head h2{font-size:clamp(1.8rem,4vw,3rem);margin:7px 0}
+.section-head p{color:var(--muted);max-width:700px;margin:auto}
+
+/* PS ACCORDION */
+.ps-list{display:grid;gap:14px}
+.ps{
+  border:1px solid var(--border);background:var(--surface);border-radius:20px;
+  overflow:hidden;box-shadow:0 8px 35px rgba(0,0,0,.045);
+  transition:transform .3s,border-color .3s,box-shadow .3s
+}
+.ps:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.ps.open{border-color:color-mix(in srgb,var(--primary) 48%,var(--border))}
+.ps-head{
+  width:100%;border:0;background:none;color:var(--text);padding:22px 24px;
+  display:flex;align-items:center;gap:18px;text-align:left;cursor:pointer
+}
+.num{
+  min-width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:900
+}
+.ps-title{flex:1}.ps-title small{display:block;color:var(--primary);font-weight:800;font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase}
+.ps-title strong{font-size:1.03rem}
+.chev{font-size:1.3rem;color:var(--muted);transition:.35s}
+.ps.open .chev{transform:rotate(180deg);color:var(--primary)}
+.content{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s ease}
+.ps.open .content{grid-template-rows:1fr}
+.content-inner{overflow:hidden;padding:0 24px}
+.ps.open .content-inner{padding-bottom:25px}
+.problem{
+  padding:20px;border-radius:16px;background:color-mix(in srgb,var(--primary) 6%,var(--surface2));
+  border:1px solid var(--border);margin-bottom:22px
+}
+.problem b{color:var(--primary)}
+.objective{margin-bottom:22px}
+.objective b{display:block;margin-bottom:6px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:18px
+}
+.card h4{margin-bottom:8px;font-size:.94rem}
+.card ul{padding-left:18px;color:var(--muted);font-size:.9rem}
+.card li{margin:4px 0}
+.stakeholders{display:flex;flex-wrap:wrap;gap:8px}
+.pill{padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--primary) 9%,var(--surface2));border:1px solid var(--border);font-size:.78rem}
+
+/* CROSS PLATFORM */
+.workflow{
+  margin-top:30px;padding:30px;border:1px solid var(--border);border-radius:24px;
+  background:var(--surface);box-shadow:var(--shadow)
+}
+.flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+.flow-item{padding:13px 16px;border-radius:14px;background:var(--surface2);border:1px solid var(--border);font-weight:750;text-align:center}
+.arrow{color:var(--primary);font-size:1.3rem}
+
+/* FOOTER */
+footer{padding:45px 0;border-top:1px solid var(--border);text-align:center;color:var(--muted)}
+footer strong{color:var(--text)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+/* Desktop-first experience */
+.desktop-alert{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(5,8,18,.72);
+  backdrop-filter:blur(16px);
+}
+.desktop-alert-box{
+  width:min(460px,100%);
+  padding:34px 28px;
+  text-align:center;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:var(--surface2);
+  box-shadow:0 30px 90px rgba(0,0,0,.28);
+}
+.desktop-alert-icon{font-size:2.5rem;margin-bottom:12px}
+.desktop-alert-box h2{font-size:1.35rem;margin-bottom:8px}
+.desktop-alert-box p{color:var(--muted);font-size:.92rem;margin-bottom:20px}
+.desktop-alert-box button{
+  border:0;border-radius:12px;padding:11px 18px;cursor:pointer;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:white;font-weight:800;
+}
+@media(max-width:900px){
+  .desktop-alert{display:flex}
+  body.desktop-continued .desktop-alert{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="desktop-alert" id="desktopAlert">
+  <div class="desktop-alert-box">
+    <div class="desktop-alert-icon">🖥️</div>
+    <h2>Best Viewed on Desktop</h2>
+    <p>DIGITwinTHON is designed as a detailed desktop hackathon experience. For the best layout, animations, and Problem Statement details, please open this page on a laptop or desktop.</p>
+    <button onclick="continueAnyway()">Continue Anyway</button>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#">DIGIT<span>win</span>THON</a>
+    <div class="nav-links">
+      <a href="#about">About</a><a href="#problems">Problem Statements</a><a href="#system">System</a>
+    </div>
+    <button class="theme" id="themeBtn" aria-label="Toggle theme">☀️</button>
+  </div>
+</nav>
+
+<header class="hero" id="about">
+  <div class="container">
+    <div class="badge"><span class="dot"></span> Presented by the AR/VR Club · Pragati University</div>
+    <div class="logo">DIGIT<span class="win">win</span>THON</div>
+    <h1>Hackathon Problem Statements</h1>
+    <p>An innovation-driven hackathon challenging participants to identify real-world institutional problems and build practical, scalable, technology-driven solutions.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#problems">Explore Challenges ↓</a>
+      <a class="btn secondary" href="#system">View System Architecture</a>
+    </div>
+    <div class="scroll">SCROLL TO EXPLORE</div>
+  </div>
+</header>
+
+<main>
+<section class="section" id="problems">
+<div class="container">
+  <div class="section-head">
+    <div class="kicker">DIGITwinTHON · AR/VR CLUB</div>
+    <h2>Choose Your Challenge</h2>
+    <p>Click a problem statement to reveal its challenge, objective, stakeholders, and functional requirements.</p>
+  </div>
+  <div class="ps-list" id="psList"></div>
+</div>
+</section>
+
+<section class="section" id="system">
+<div class="container">
+  <div class="section-head">
+    <div class="kicker">Cross-Platform Requirements</div>
+    <h2>One Digital Ecosystem</h2>
+    <p>The eight modules should share common institutional infrastructure instead of functioning as isolated systems.</p>
+  </div>
+  <div class="grid">
+    <div class="card"><h4>🔐 Single Sign-On</h4><p>One login for authorized modules and services.</p></div>
+    <div class="card"><h4>👤 Central Student Profile</h4><p>Clubs, events, certificates, internships, placement, coding, achievements and academic information in one profile.</p></div>
+    <div class="card"><h4>🛡️ Unified RBAC</h4><p>Dynamic access control according to user role and permissions.</p></div>
+    <div class="card"><h4>🔔 Central Notification Engine</h4><p>Common notifications for events, placements, approvals, certificates and announcements.</p></div>
+    <div class="card"><h4>📁 Document Repository</h4><p>Controlled storage for certificates, resumes, internship documents and accreditation evidence.</p></div>
+    <div class="card"><h4>🔎 Unified Search</h4><p>Search authorized information across clubs, students, projects, achievements, internships and documents.</p></div>
+    <div class="card"><h4>📊 Central Analytics</h4><p>Institution-level analytics combining data from multiple modules.</p></div>
+    <div class="card"><h4>🧾 Audit & Activity Logs</h4><p>Track important operations such as uploads, approvals, edits and role changes.</p></div>
+    <div class="card"><h4>📤 Data Export</h4><p>Authorized export in PDF, Excel and CSV formats.</p></div>
+    <div class="card"><h4>📱 Responsive Design</h4><p>Effective experience across desktop, laptop, tablet and mobile.</p></div>
+    <div class="card"><h4>🔒 Security</h4><p>Authentication, authorization, validation, secure storage and document access controls.</p></div>
+    <div class="card"><h4>🚀 Scalability</h4><p>Allow future college modules without redesigning the complete architecture.</p></div>
+  </div>
+
+  <div class="workflow">
+    <div class="section-head" style="margin-bottom:20px">
+      <div class="kicker">Overall System Workflow</div>
+      <h2 style="font-size:1.8rem">From Login to Insight</h2>
+    </div>
+    <div class="flow">
+      <div class="flow-item">Student / Faculty / Admin</div><div class="arrow">→</div>
+      <div class="flow-item">Single Login<br>& Role Verification</div><div class="arrow">→</div>
+      <div class="flow-item">Centralized Dashboard</div><div class="arrow">→</div>
+      <div class="flow-item">Authorized Modules</div><div class="arrow">→</div>
+      <div class="flow-item">Central Database<br>& Repository</div><div class="arrow">→</div>
+      <div class="flow-item">Notifications<br>& Approvals</div><div class="arrow">→</div>
+      <div class="flow-item">Analytics<br>& Reporting</div>
+    </div>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+  <div class="container"><strong>DIGITwinTHON</strong> · Hackathon Problem Statements<br>Presented by the AR/VR Club · Pragati University</div>
+</footer>
+
+<script>
+const problems = [
+{
+title:"Centralized Technical Clubs Management System", short:"MAIN PORTAL",
+problem:"Technical clubs currently manage memberships, events, attendance, certificates, projects, learning resources, announcements, and reports through disconnected tools such as spreadsheets, messaging groups, forms, and physical documents. This results in duplicated data, difficulty tracking student participation, delayed certificate generation, poor visibility of club activities, and increased administrative workload.",
+objective:"Develop a centralized technical-club management platform where students, faculty coordinators, club administrators, and super administrators can manage the complete lifecycle of technical clubs digitally.",
+stakeholders:["Students","Club Members","Club Coordinators","Faculty Coordinators","Club Admins","Department Coordinators","Super Admin"],
+req:[
+["Public Website & Navigation",["Home page with college and technical-club overview.","About Us and Contact Us sections.","Individual club profiles with objectives, domains, coordinators, team members and activities.","Global search across clubs, events, projects, resources, announcements and members.","Responsive desktop, tablet and mobile interface."]],
+["User Registration & Authentication",["Student registration using college credentials/ID.","Secure login/logout and role-based access control.","Roles: Student, Club Member, Club Admin, Faculty Coordinator, Department Admin, Super Admin.","Password reset, account recovery, profile update and verification.","Optional college email/OTP verification."]],
+["Digital Membership Card",["Automatic digital membership cards with unique membership ID.","QR code linked to student membership profile.","Club, student, department, academic year, photograph and validity details.","QR verification, digital download/share, renewal and status tracking."]],
+["Club Team Management",["Create and manage executive teams and positions.","Define tenure and academic year.","Maintain historical team records and responsibilities.","Faculty coordinator approval for team changes."]],
+["Event Management – Fully Automated",["Create events with title, description, date/time, venue, type, club, eligibility, capacity and deadline.","Automated poster and circular generation using templates.","Online registration, limits, waitlists and confirmations.","Automated reminders, email/portal notifications and QR attendance.","Manual attendance correction by authorized admins.","Feedback, participation verification and automatic certificate generation with unique ID + QR.","Automated event reports covering registrations, attendance, feedback, photographs, organizers and outcomes."]],
+["Project Showcase",["Technical project submissions with title, description, domain, technologies, team, GitHub/demo link, documentation and media.","Faculty/club review workflow with rating, remarks and approval/rejection.","Search/filter by technology, domain, department and year.","Featured projects and configurable project leaderboard."]],
+["Learning Management System",["Centralized notes, tutorials, videos, presentations, links and reference material.","Categorize by domain, technology, difficulty and semester.","Track progress, bookmarks and completion.","Faculty/club-admin resource management."]],
+["Learning Roadmap",["Technology-specific Beginner → Intermediate → Advanced roadmaps.","Recommended resources and prerequisite tracking.","Progress percentage and skill completion badges."]],
+["Software Tools Directory",["Directory of software/development tools with category, purpose, platform, license and official link.","Search/filter and recommended tools for learning paths."]],
+["Gallery & Announcements",["Event photos/videos and club activity gallery.","Announcement publishing and scheduling.","Important-notice highlighting and category/date filtering."]],
+["Notification System",["Portal/email notifications, event reminders and registration confirmations.","Certificate availability and approval/rejection notifications.","Important club/academic announcements and read/unread tracking."]],
+["Club Analytics Dashboard",["Total and active/inactive clubs.","Members per club and department-wise membership.","Events, participation, attendance and certificates.","Projects submitted/approved and resource usage.","Club activity trends, most active clubs and student participation rankings."]],
+["Admin Dashboard",["User, club, event and certificate management.","Role/permission management.","Content moderation, announcements, audit logs and system activity monitoring."]],
+["Complete Report System",["Download PDF/Excel reports for club-wise, student-wise, event-wise, department-wise and academic-year-wise data.","Certificate, project showcase and club performance reports."]]
+]
+},
+{
+title:"Smart Placement Management Portal",short:"PLACEMENT PORTAL",
+problem:"Placement activities are frequently maintained through spreadsheets and separate communication channels. Eligibility verification, student registration, drive tracking, and placement statistics require significant manual effort and may result in errors.",
+objective:"Develop a centralized placement management system that automates company-drive management, eligibility checking, student registration, selection tracking, and placement analytics.",
+req:[
+["Placement Notification",["Publish drives with company profile, job description, date, venue, mode and deadline.","Automated student notifications through email and portal alerts."]],
+["Company Management",["Company profiles, job roles, package/CTC, location, required skills and selection process.","Recruitment status and historical recruitment records."]],
+["Eligibility Criteria Engine",["Automatically determine eligibility using CGPA, branch, graduation year, backlog status, percentage, required skills and applicable placement restrictions.","Clearly show Eligible or Not Eligible with reason."]],
+["Student Registration",["Pre-filled student profile and drive-specific registration.","Resume upload, skills and academic information.","Confirmation and deadline enforcement."]],
+["Selection Tracking",["Track Registered → Shortlisted → Assessment → Technical Round → HR Round → Selected/Rejected.","Stage-wise updates, offer details, joining status and multiple-offer tracking."]],
+["Placement Analytics",["Overall, company-wise, branch-wise and year-wise placement percentage.","Package-wise analysis including highest, average and median package.","Placed/unplaced students and recruiter participation trends."]],
+["Report Generation",["Company-wise, branch-wise, year-wise, package-wise and student placement history reports.","Placement summary reports."]]
+]
+},
+{
+title:"Centralized Internship Management & Approval Portal",short:"INTERNSHIP PORTAL",
+problem:"Internship information, permissions, certificates, reviews, and student records are maintained across different platforms. Faculty members lack a centralized mechanism to approve, monitor, and verify internships.",
+objective:"Create a centralized internship management and approval system covering the complete internship lifecycle.",
+req:[
+["Internship Registration",["Student profile, company, domain, type, dates, duration, stipend, mode and offer letter upload."]],
+["Internship Calendar",["Centralized calendar with start/end tracking and upcoming deadlines.","Filter by department and academic year."]],
+["Permission & Approval Workflow",["Student → Faculty Mentor → HOD → Approved.","Review, rejection remarks, resubmission and status tracking."]],
+["Internship Monitoring",["Progress updates, mentor remarks, attendance/progress records where required and periodic updates.","Completion status tracking."]],
+["Certificate & Review Management",["Offer letter and certificate upload.","Completion certificate verification, student review, faculty evaluation and document verification status."]],
+["Internship Classification",["Short-term, long-term, industry, research and academic internship.","Paid/unpaid classification."]],
+["Reports",["Student-wise, company-wise, branch-wise, date-wise and duration-wise reports.","Short-term/long-term and approved/pending/rejected reports."]]
+]
+},
+{
+title:"Intelligent Timetable Generation & Clash Detection",short:"TIMETABLE PORTAL",
+problem:"Manual timetable preparation can result in faculty clashes, classroom conflicts, laboratory allocation issues, uneven workload, and repeated modifications.",
+objective:"Develop an intelligent timetable management system capable of generating clash-free class, faculty, and laboratory schedules.",
+req:[
+["Master Data Management",["Faculty, subjects, departments, sections, classrooms, laboratories, working days/hours, subject credits and theory/lab hours."]],
+["Faculty Availability",["Faculty availability and preferred/blocked time slots.","Workload tracking and subject allocation."]],
+["Classroom & Lab Management",["Classroom/lab capacity, equipment availability and lab-specific subject allocation."]],
+["Timetable Generation",["Generate class-wise, faculty-wise, room-wise, lab-wise and department-wise timetables."]],
+["Clash Detection",["Identify faculty double booking, classroom/lab double booking, student/section overlap, subject duplication and invalid time-slot allocation."]],
+["Timetable Modification",["Drag-and-drop/manual editing where applicable.","Automatic clash rechecking, version history and final publication."]],
+["Export",["PDF, Excel and printable/student-friendly timetable views."]]
+]
+},
+{
+title:"Mid Marks, Class Test & Assignment Management Portal",short:"INTERNAL ASSESSMENT",
+problem:"Internal marks, class-test scores, assignments, and related academic documents are distributed through different communication channels. Students lack a centralized academic record and faculty members spend considerable time maintaining spreadsheets.",
+objective:"Create a centralized internal-assessment management system for marks, assignments, submissions, and academic reports.",
+req:[
+["Assessment Management",["Create mid examinations, class tests, quizzes, assignments, practical assessments and internal assessments."]],
+["Marks Entry",["Student-wise entry, bulk upload, Excel import and marks validation.","Configure maximum marks and automatically calculate totals and percentages."]],
+["Assignment Management",["Create assignments, configure deadlines, upload files, track submissions and identify late submissions.","Faculty evaluation, remarks and feedback."]],
+["Edit & Update",["Authorized faculty mark edits with change history/audit log.","Correction workflow and student notification after updates."]],
+["Student Dashboard",["Subject/assessment-wise marks, assignment status, missing submissions, overall performance and faculty feedback."]],
+["Analytics",["Class average, highest/lowest marks, performance trends, subject-wise performance, submission percentage and at-risk student identification."]],
+["Reports",["Student-wise, subject-wise, class-wise, assessment-wise and assignment submission reports."]]
+]
+},
+{
+title:"Unified Coding & Developer Profile Tracking Portal",short:"CODING PROFILE TRACKING",
+problem:"Students maintain coding and professional profiles across platforms such as HackerRank, LeetCode, GitHub, and LinkedIn. Faculty members have no centralized mechanism to monitor student progress, skills, repositories, problem-solving activity, and achievements.",
+objective:"Develop a unified student coding-profile tracking system with profile integration and department-level analytics.",
+req:[
+["Profile Linking",["Add HackerRank, LeetCode, GitHub and LinkedIn profiles."]],
+["Profile Verification",["Validate profile URLs, prevent duplicate profile mapping and verify student ownership where supported."]],
+["Coding Metrics",["Track available metrics such as problems solved, contests, badges, ratings, repositories, contributions, stars/forks where available and activity."]],
+["Student Coding Dashboard",["Platform-wise statistics, progress over time, achievements, coding activity, repository activity and skill/domain distribution."]],
+["Faculty Dashboard",["Monitor student activity, department performance, students requiring improvement, top performers and platform-wise statistics."]],
+["Leaderboard",["Configurable rankings based on problems solved, coding rating, GitHub activity, badges or a composite coding score."]],
+["Data Integrity Requirement",["Clearly distinguish verified data retrieved through supported integrations from student-provided data.","Do not claim live statistics when a platform does not provide an accessible/authorized integration."]]
+]
+},
+{
+title:"Digital Student & Faculty Achievement Showcase",short:"ACHIEVEMENT PORTAL",
+problem:"Student and faculty achievements are scattered across certificates, documents, messaging groups, and individual records. The institution lacks a centralized platform for verification, showcasing, and reporting achievements.",
+objective:"Create a centralized achievement repository for students and faculty with verification, categorization, public showcasing, and analytics.",
+req:[
+["Student Achievement Module",["Submit title, category, organization/event, date, position/rank, description, certificate and supporting evidence."]],
+["Faculty Achievement Module",["Research achievements, publications, awards, certifications, patents, conferences and technical/non-technical achievements."]],
+["Achievement Categories",["Technical, Non-Technical, Hackathon, Coding, Certification, Research, Sports, Cultural, Entrepreneurship, Innovation and Leadership."]],
+["Verification Workflow",["Student/Faculty → Faculty Verifier → Approved/Rejected.","Document verification, remarks, re-upload, timestamp and verified badge."]],
+["Public Gallery",["Achievement cards and profiles with category, department and year filters.","Search and featured achievements."]],
+["Achievement Analytics",["Total achievements, category/department distribution, year trends, top departments and verified vs pending."]],
+["Reports",["Student-wise, faculty-wise, department-wise, category-wise, academic-year and verified-achievement reports."]]
+]
+},
+{
+title:"Smart NAAC / NBA Accreditation File Management",short:"NAAC / NBA FILE MANAGEMENT",
+problem:"During NAAC/NBA accreditation and academic audits, departments must collect large volumes of documents from different faculty members and locations. Files are often stored in disconnected folders, making criteria-wise evidence collection, verification, version control, and final report preparation difficult.",
+objective:"Develop a secure centralized accreditation-document management platform for systematic collection, verification, organization, and retrieval of NAAC/NBA evidence.",
+req:[
+["Accreditation Workspace",["Separate workspaces for NAAC, NBA, academic audits and other institutional accreditation requirements."]],
+["Criteria Management",["Configure criteria, sub-criteria, metrics, required evidence, document types, academic year and responsible department/person."]],
+["File Upload",["Upload PDFs, documents, spreadsheets, images and supporting evidence.","Metadata: criteria, metric, department, academic year, document type, upload date, uploader and verification status."]],
+["Role-Based Access",["Faculty Contributor, Department Coordinator, HOD, NAAC Coordinator, NBA Coordinator, Admin and Super Admin.","Control access by department, criteria and role."]],
+["Verification Workflow",["Upload → Department Review → Coordinator Verification → Approved/Rejected.","Remarks, re-upload, status, history and approval timestamps."]],
+["Version Control",["Multiple document versions, uploader/timestamp records, no accidental overwriting and identification of latest approved version."]],
+["Search & Filter",["Search by criteria, metric, department, academic year, file type, verification status, uploader and keyword."]],
+["Evidence Completeness Dashboard",["Total required, uploaded, pending, verified, rejected and missing evidence.","Criteria completion percentages such as Criterion 1 — 85% Complete."]],
+["Consolidated Report Generation",["Criteria-wise index, department/year-wise evidence, missing-document and verification reports.","Final consolidated accreditation package."]],
+["Audit Trail & Security",["Activity logs, upload/download history where required, permissions, secure authentication, backup/recovery and protection against unauthorized modification/deletion."]]
+]
+}
+];
+
+const list=document.getElementById("psList");
+list.innerHTML=problems.map((p,i)=>`
+<article class="ps" id="ps-${i+1}">
+<button class="ps-head" onclick="togglePS(${i})">
+  <span class="num">${String(i+1).padStart(2,"0")}</span>
+  <span class="ps-title"><small>Problem Statement ${String(i+1).padStart(2,"0")} · ${p.short}</small><strong>${p.title}</strong></span>
+  <span class="chev">⌄</span>
+</button>
+<div class="content"><div class="content-inner">
+  <div class="problem"><b>Problem</b><br>${p.problem}</div>
+  <div class="objective"><b>Objective</b>${p.objective}</div>
+  ${p.stakeholders?`<div class="card" style="margin-bottom:15px"><h4>Stakeholders</h4><div class="stakeholders">${p.stakeholders.map(x=>`<span class="pill">${x}</span>`).join("")}</div></div>`:""}
+  <div class="grid">${p.req.map(r=>`<div class="card"><h4>${r[0]}</h4><ul>${r[1].map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("")}</div>
+</div></div>
+</article>`).join("");
+
+function togglePS(i){
+  const current=document.getElementById("ps-"+(i+1));
+  document.querySelectorAll(".ps").forEach((x,j)=>{if(j!==i)x.classList.remove("open")});
+  current.classList.toggle("open");
+  if(current.classList.contains("open")){
+    setTimeout(()=>current.scrollIntoView({behavior:"smooth",block:"nearest"}),100);
+  }
+}
+
+const saved=localStorage.getItem("digitwin-theme");
+const preferred=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+document.documentElement.dataset.theme=saved||preferred;
+function updateIcon(){document.getElementById("themeBtn").textContent=document.documentElement.dataset.theme==="dark"?"☀️":"🌙"}
+updateIcon();
+document.getElementById("themeBtn").onclick=()=>{
+ const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
+ document.documentElement.dataset.theme=next;localStorage.setItem("digitwin-theme",next);updateIcon();
+};
+
+function continueAnyway(){
+  document.body.classList.add("desktop-continued");
+}
+</script>
+</body>
+</html>
